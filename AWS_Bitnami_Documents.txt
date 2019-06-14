@@ -3,3 +3,13 @@ Public DNS(IPv4): ec2-18-223-156-5.us-east-2.compute.amazonaws.com
 IVP4 Public IP: 18.223.156.5
 
 connect: ssh -i "NGO.pem" ubuntu@ec2-18-223-156-5.us-east-2.compute.amazonaws.com
+
+cd /opt/bitnami/apps/django/
+sudo chown -R ubuntu .
+sudo chmod -R g+w .
+
+restart apache: sudo /opt/bitnami/ctlscript.sh restart apache
+
+sudo mysql -u root -p
+
+Bitnami password of system Log file: LA8XeG2g2QzQ
