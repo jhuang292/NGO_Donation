@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from ngoapp import views
+from django.contrib.auth import views
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.BaseView.as_view())
+    #url("", views.LoginView(template_name='trialbase.html'))
 ]
