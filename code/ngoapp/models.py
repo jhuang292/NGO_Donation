@@ -2,15 +2,20 @@ from django.db import models
 from django.contrib.auth import models
 from django.db import models
 from django.db.models import Model
-#from django.contrib import a
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import Group
+from  django.contrib.auth.models import PermissionsMixin
 
 
 # Create your models here
 
 
-class CustomUser(Model):
-    choices = [("User", 'User'), ('Admin', 'Admin')]
-    choices = models.CharField(choices=choices , max_length=10)
+class AppUser(Model):
+    first_name = models.CharField(max_length=10, blank=False, default='', name="First Name")
+    last_name = models.CharField(max_length=10, blank=False, default='', name="Last Name")
+    email = models.EmailField(blank=False, default='')
+    group = models.ForeignKey(Group, on_delete=models.PROTECT, default="User")
+
 
 
 class UserData(Model):
@@ -38,6 +43,6 @@ class Donation(Model):
 
 class RegisteredEvents(Model):
     event = models.ForeignKey(Events, on_delete= models.CASCADE)
-    custom_user = models.ForeignKey(CustomUser, on_delete= models.CASCADE)
+    custom_user = models.ForeignKey(AppUser, on_delete= models.CASCADE)
 
 

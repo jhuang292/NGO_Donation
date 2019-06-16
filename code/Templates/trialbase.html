@@ -6,9 +6,32 @@
 </head>
 <body>
 <p>This is a trial</p>
+ <table style="width:100%">
+     <tr>
+     {% for item in headers %}
+     <th>{{item}}<th/>
+     {% endfor %}
+     <tr/>
+     {% for
 </body>
 </html>
 
 
 
 <!-- This is just for testing delete for production -->
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th>
+    <th>Age</th>
+  </tr>
+  <tr>
+    <td>Jill</td>
+    <td>Smith</td>
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td>
+    <td>94</td>
+  </tr>
+</table>

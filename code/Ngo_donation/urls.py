@@ -17,8 +17,14 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views
 from django.conf.urls import url
+from django.contrib.auth.models import Group
+from ngoapp import views
+
+Group.objects.update_or_create(name="Admin")
+Group.objects.update_or_create(name="User")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #url("", views.LoginView(template_name='trialbase.html'))
+    path('', views.BaseView.as_view())
+
 ]
