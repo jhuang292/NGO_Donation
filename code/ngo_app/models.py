@@ -1,16 +1,9 @@
 from django.db import models
-from django.contrib.auth import models
-from django.db import models
-from django.db.models import Model
-from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
-from  django.contrib.auth.models import PermissionsMixin
+# Create your models here.
 
 
-# Create your models here
-
-
-class AppUser(Model):
+class AppUser(models.Model):
     first_name = models.CharField(max_length=10, blank=False, default='', name="First Name")
     last_name = models.CharField(max_length=10, blank=False, default='', name="Last Name")
     email = models.EmailField(blank=False, default='')
@@ -18,7 +11,7 @@ class AppUser(Model):
 
 
 
-class UserData(Model):
+class UserData(models.Model):
     first_name = models.CharField(max_length=40)
     Last_name = models.CharField(max_length=40)
     address_line1 = models.CharField(max_length=50)
@@ -29,20 +22,18 @@ class UserData(Model):
     coutry = models.CharField(max_length=30)
 
 
-class Events(Model):
+class Events(models.Model):
     name = models.CharField(max_length=40)
     type = models.CharField(max_length=30)
     status = models.CharField(max_length=10)
 
 
-class Donation(Model):
+class Donation(models.Model):
     event = models.ForeignKey(Events, on_delete= models.CASCADE)
     donation_amount = models.DecimalField(decimal_places=2, max_digits= 1000000000000000)
     user_data = models.ForeignKey(UserData, on_delete= models.CASCADE)
 
 
-class RegisteredEvents(Model):
+class RegisteredEvents(models.Model):
     event = models.ForeignKey(Events, on_delete= models.CASCADE)
     custom_user = models.ForeignKey(AppUser, on_delete= models.CASCADE)
-
-
