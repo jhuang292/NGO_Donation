@@ -6,7 +6,8 @@ from django.views import View
 from .forms import UserDataForms
 from .models import UserData, AppUser
 from .forms import UserDataForms
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404 ,redirect
+from django.http import HttpResponse
 # Create your views here.
 class HomeView(LoginView, LogoutView):
     pass
@@ -45,10 +46,16 @@ class UpdateUsers(UpdateView):
 
 class DelUser(DeleteView):
     model = AppUser
-    success_url = '/admin'
-    template_name = "noform.html"
+
     def get(self, request, *args, **kwargs):
-        user = get_object_or_404(AppUser, pk=question_id)
+        try:
+            pkkey = kwargs['pk']
+        except:
+            return HttpResponse(status=500)
+
+        user = get_object_or_404(AppUser, pk=pkkey)
+        user.delete()
+        return redirect('/admin/')
 
 
 class AddUser(CreateView):
