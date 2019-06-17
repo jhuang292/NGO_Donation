@@ -4,8 +4,8 @@ from django.contrib.auth.models import Group
 
 
 class AppUser(models.Model):
-    first_name = models.CharField(max_length=10, blank=False, default='', name="First Name")
-    last_name = models.CharField(max_length=10, blank=False, default='', name="Last Name")
+    first_name = models.CharField(max_length=10, blank=False, default='')
+    last_name = models.CharField(max_length=10, blank=False, default='')
     email = models.EmailField(blank=False, default='')
     group = models.ForeignKey(Group, on_delete=models.PROTECT, default="User")
 
@@ -13,13 +13,13 @@ class AppUser(models.Model):
 
 class UserData(models.Model):
     first_name = models.CharField(max_length=40)
-    Last_name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40)
     address_line1 = models.CharField(max_length=50)
-    address_line2 = models.CharField(max_length=50)
+    address_line2 = models.CharField(max_length=50, null=True)
     city = models.CharField(max_length=100)
     state_code = models.CharField(max_length=2)
     zip = models.CharField(max_length=8)
-    coutry = models.CharField(max_length=30)
+    country = models.CharField(max_length=30)
 
 
 class Events(models.Model):
