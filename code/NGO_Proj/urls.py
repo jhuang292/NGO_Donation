@@ -31,10 +31,14 @@ Group.objects.get_or_create(name="Admin")
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('g', views.BasicAppView.as_view()),
-    path('a', views.ListAll.as_view()),
-    path('up/<pk>', views.UpdateUsers.as_view()),
-    path('udel/<pk>' , views.DelUser.as_view()),
-    path('uadd/', views.AddUser.as_view()),
+    path('all', views.ListAll.as_view()),
+
+    path('user/update/<pk>', views.UpdateUsers.as_view()),
+    path('user/del/<pk>' , views.DelUser.as_view()),
+    path('user/add/', views.AddUser.as_view()),
+
+    path('event/add', views.AddEvent.as_view()),
+    path('event/update/<pk>', views.UpdateEvent.as_view()),
 
     path('userdat/<first_name>', views.UpdateStuff.as_view()),
     path("login/", LoginView.as_view())

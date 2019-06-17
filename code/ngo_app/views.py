@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import *
 from django.views import View
 from .forms import UserDataForms
-from .models import UserData, AppUser
+from .models import UserData, AppUser ,Events
 from .forms import UserDataForms
 from django.shortcuts import get_object_or_404 ,redirect
 from django.http import HttpResponse
@@ -64,8 +64,29 @@ class AddUser(CreateView):
     template_name = 'base.html'
     success_url = '/admin'
 
-    # def post(self, request, *args, **kwargs):
-    #     form = BookCreateForm(request.POST
-    #     if form.is_valid():
-    #         book = form.save()
-    #         book.save()
+
+class AddEvent(CreateView):
+    model = Events
+    fields = ['name', 'type', 'status']
+    template_name = 'base.html'
+    success_url = '/admin/'
+
+class UpdateEvent(UpdateView):
+    model = Events
+    fields = ['name', 'type', 'status']
+    template_name = 'base.html'
+    pk_url_kwarg = 'pk'
+
+
+class DelEvent(DeleteView):
+    model = Events
+
+    def get(self, request, *args, **kwargs):
+        try:
+            pkkey = kwargs['pk']
+        except:
+            return HttpResponse(status=500)
+
+        evnt = get_object_or_404(Events, pk=pkkey)
+        evnt.delete()
+        return redirect('/admin/')
