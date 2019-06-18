@@ -105,10 +105,7 @@
       <div class="container-fluid">
         {% if request.user|has_group:'Admin' %}
         <h1 class="mt-4">User Management</h1>
-        {% endif %}
          <p align="right"><a href="/user/add/">Add User</a></p>
-                      {% if request.user|has_group:'Admin' %}
-
         <table>
           <tr>
             <th>First Name</th>
@@ -126,17 +123,16 @@
               <td>{{ item| return_group }}</td>>
               <td><a href="/user/update/{{item.pk}}">edit</a></td>
               <td><a href="/user/del/{{item.pk}}">Delete</a></td>
-              {% endif %}
             </tr>
           {% endfor %}
-          {% if request.user|has_group:'User' %}
-            <button>sdfasdf</button>
-
           {% endif %}
-
-
-
-
+          {% if request.user|has_group:'User' %}
+          {% for item in object_list %}
+            <button>{{item.first_name}}{{itme.last_name}}</button>
+          {% empty %}
+          <a href = "/register"><button>Register</button></a>
+          {% endfor %}
+          {% endif %}
         </table>
       </div>
     </div>

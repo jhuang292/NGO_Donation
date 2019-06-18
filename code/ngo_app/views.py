@@ -26,7 +26,7 @@ class ListAll(ListView):
             return [item.Non_Admin for item in AdminToUserMAp.objects.filter(Admin=self.request.user)]
         else:
             print("The Query SEt was called")
-            return Events.objects.all()
+            return EventRegistration.objects.filter(user_user_model=self.request.user)
 
 
 

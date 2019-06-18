@@ -22,7 +22,7 @@ class EventRegistration(models.Model):
     zip = models.CharField(max_length=8)
     country = models.CharField(max_length=30)
     urbanization =models.CharField(max_length=30)
-    user_user_model = models.ForeignKey(User, null=True ,on_delete=models.SET_NULL, default=None)
+    user_user_model = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, default=None)
 
 
 class Events(models.Model):
