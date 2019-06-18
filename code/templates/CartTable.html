@@ -14,7 +14,7 @@
 <table>
 {% for item in object_list %}
     <tr> <td>{{ item.name }}</td> <td>{{ item.type }}</td>  <td>{{ item.status }}</td> <td> <input type="text" name='itempknum{{item.pk}}'></td>
-        <td><input type="checkbox" name="itempk{{item.pk}}" value="True" a> </td><td><a href="/user/del/{{item.pk}}">Delete</a></td></tr>
+        <td><input type="checkbox" name="itempk{{item.pk}}" value="True" a> </td></tr>
 {% endfor %}
         </table>
 

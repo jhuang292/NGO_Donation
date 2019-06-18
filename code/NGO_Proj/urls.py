@@ -31,7 +31,8 @@ Group.objects.get_or_create(name="Admin")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('all', views.ListAll.as_view()),
+    path('', views.ListAll.as_view()),
+    #path('', views.HomeView.as_view()),
 
     path('user/update/<pk>', views.UpdateUsers.as_view()),
     path('user/del/<pk>' , views.DelUser.as_view()),

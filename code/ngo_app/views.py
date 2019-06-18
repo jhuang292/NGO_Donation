@@ -12,21 +12,21 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import AddUserForm
 from django.core.serializers import serialize
 
-class HomeView(View):
-
-    def get(self, request, *args, **kwargs):
-                
 
 class ListAll(ListView):
-    template_name = "AdminTable.html"
+    template_name = "HomeTable.html"
+
     def get(self, request, *args, **kwargs):
-        if is_auth_perm(request, True):
+        if request.user.is_authenticated:
             return super().get(request, args, kwargs)
-        else:
-            return Auth_login_or_Deny(request)
+
 
     def get_queryset(self):
-        return [item.Non_Admin for item in AdminToUserMAp.objects.filter(Admin=self.request.user)]
+        if is_auth_perm(self.request, True):
+            return [item.Non_Admin for item in AdminToUserMAp.objects.filter(Admin=self.request.user)]
+        else:
+            print("The Query SEt was called")
+            return Events.objects.all()
 
 
 
@@ -164,7 +164,7 @@ class DelEvent(DeleteView):
 class AllEventsView(ListView):
     model = Events
     queryset = Events.objects.all()
-    template_name = 'CartTable.html'
+    template_name = 'AdminTableForEvents.html'
 
 
 
