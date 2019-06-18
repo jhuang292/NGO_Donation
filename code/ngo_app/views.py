@@ -12,16 +12,24 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import AddUserForm
 from django.core.serializers import serialize
 
-# Create your views here.
+class HomeView(View):
+
+    def get(self, request, *args, **kwargs):
+
 
 class ListAll(ListView):
-    queryset = User.objects.exclude(is_superuser=True)
     template_name = "AdminTable.html"
     def get(self, request, *args, **kwargs):
         if is_auth_perm(request, True):
             return super().get(request, args, kwargs)
         else:
             return Auth_login_or_Deny(request)
+
+    def get_queryset(self):
+        return [item.Non_Admin for item in AdminToUserMAp.objects.filter(Admin=self.request.user)]
+
+
+
 
 
 
@@ -152,6 +160,12 @@ class DelEvent(DeleteView):
                 event.delete()
                 redirect('/admin')
         return Auth_login_or_Deny(request)
+
+class AllEventsView(ListView):
+    model = Events
+    queryset = Events.objects.all()
+    template_name = 'CartTable.html'
+
 
 
 

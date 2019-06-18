@@ -40,11 +40,12 @@ urlpatterns = [
     path('event/add/', views.AddEvent.as_view()),
     path(r'event/update/<pk>', views.UpdateEvent.as_view()),
     path(r'event/del/<pk>', views.DelEvent.as_view()),
+    path(r'events/all', views.AllEventsView.as_view()),
 
     path('userdat/<first_name>', views.UpdateStuff.as_view()),
     path("login/", LoginView.as_view()),
 
-    path('event/register', views.EvenRegistrationView.as_view()),
+    path('register/', views.EvenRegistrationView.as_view()),
     path('events/cart/', views.ListCArtView.as_view())
 
 ]
