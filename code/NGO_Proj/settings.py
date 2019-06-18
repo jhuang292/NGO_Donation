@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ngo_app',
     'bootstrap4',
+    'phone_field'
+
 ]
 
 MIDDLEWARE = [
@@ -128,3 +130,8 @@ STATIC_URL = '/static/'
 
 
 LOGIN_REDIRECT_URL= '/admin'
+
+
+
+#AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
+

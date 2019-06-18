@@ -23,6 +23,7 @@ from django.conf.urls import url
 from django.urls import include
 from django.contrib.auth.views import auth_login
 
+
 Group.objects.get_or_create(name="User")
 Group.objects.get_or_create(name="Admin")
 
@@ -30,7 +31,6 @@ Group.objects.get_or_create(name="Admin")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('g', views.BasicAppView.as_view()),
     path('all', views.ListAll.as_view()),
 
     path('user/update/<pk>', views.UpdateUsers.as_view()),
@@ -41,7 +41,11 @@ urlpatterns = [
     path('event/update/<pk>', views.UpdateEvent.as_view()),
 
     path('userdat/<first_name>', views.UpdateStuff.as_view()),
-    path("login/", LoginView.as_view())
+    #path("auth/", include("django.con"))
+
+    path('event/register', views.EvenRegistrationView.as_view()),
+    path('events/cart/', views.ListCArtView.as_view())
+
 
 
 ]
