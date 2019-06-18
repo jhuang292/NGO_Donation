@@ -70,13 +70,13 @@ class DelUser(DeleteView):
 class AddUser(View):
     model = User
     fields = ['username','first_name', 'last_name', 'email', 'password']
-    template_name = 'base.html'
+    template_name = 'base_add.html'
     success_url = '/admin'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             form = AddUserForm
-            return render(request, 'base.html', {'form':form})
+            return render(request, 'base_add.html', {'form':form})
         return redirect('/login')
 
     def post(self, request, *args, **kwargs):
