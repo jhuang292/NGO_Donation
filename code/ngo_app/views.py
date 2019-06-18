@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import *
 from django.views import View
 from .models import Donation
-from .models import EventRegistration,Events ,User , Group
+from .models import EventRegistration,Events ,User , Group , AdminToUserMAp , AdminToEventMap
 from .forms import UserDataForms
 from django.shortcuts import get_object_or_404 ,redirect
 from django.http import HttpResponse
@@ -13,14 +13,17 @@ from .forms import AddUserForm
 from django.core.serializers import serialize
 
 # Create your views here.
-class HomeView(LoginView, LogoutView):
-    pass
-
-
 
 class ListAll(ListView):
-    queryset = User.objects.all()
+    queryset = User.objects.exclude(is_superuser=True)
     template_name = "AdminTable.html"
+    def get(self, request, *args, **kwargs):
+        if is_auth_perm(request, True):
+            return super().get(request, args, kwargs)
+        else:
+            return Auth_login_or_Deny(request)
+
+
 
 
 class UpdateStuff(UpdateView):
@@ -38,64 +41,81 @@ class UpdateUsers(UpdateView):
     fields = ['first_name', 'last_name', 'email']
     template_name = 'base.html'
     pk_url_kwarg = 'pk'
-    slug_url_kwarg = 'first_name'
-    slug_field = 'First Name'
     success_url = '/admin'
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+        if is_auth_perm(request, True) and is_your_user(request, User.objects.get(pk=kwargs['pk'])):
             return super().get(request, args, kwargs)
-        return redirect('/login')
+        else:
+            return Auth_login_or_Deny(request)
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return super().post(request, args, kwargs)
-        return redirect('/login')
+            if is_auth_perm(request,True) and is_your_user(request, User.objects.get(pk=kwargs['pk'])):
+                return super().post(request, args, kwargs)
+            else:
+                return Auth_login_or_Deny(request)
+
 
 class DelUser(DeleteView):
     model = User
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+        if is_auth_perm(request, True):
             try:
                 pkkey = kwargs['pk']
             except:
                 return HttpResponse(status=500)
+            if is_your_user(request, User.objects.get(pk=pkkey)):
+                user = get_object_or_404(User, pk=pkkey)
+                user.delete()
+                redirect('/admin')
+        return Auth_login_or_Deny(request)
 
-            user = get_object_or_404(User, pk=pkkey)
-            user.delete()
-            return redirect('/admin/')
 
-
-
-class AddUser(View):
+class AddUser(CreateView):
     model = User
     fields = ['username','first_name', 'last_name', 'email', 'password']
     template_name = 'base.html'
     success_url = '/admin'
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+        if is_auth_perm(request, True):
             form = AddUserForm
             return render(request, 'base.html', {'form':form})
-        return redirect('/login')
+        else:
+            return Auth_login_or_Deny(request)
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+        if is_auth_perm(request, True):
             form = AddUserForm(request.POST)
-            super(AddUserForm, form).clean()
-            ustobj = form.save()
-            ustobj.groups.set([get_object_or_404(Group, name="User")])
-            ustobj.save()
-            return redirect("/admin/")
-        return redirect('/login')
-
+            if form.is_valid():
+                ustobj = form.save()
+                ustobj.groups.set([get_object_or_404(Group, name="User")])
+                ustobj.save()
+                AdminToUserMAp.objects.create(Admin=request.user , Non_Admin=ustobj)
+                return redirect("/admin/")
+            else: return render(request, 'base.html', {'form':form})
+        return Auth_login_or_Deny(request)
 
 
 class AddEvent(CreateView):
     model = Events
-    fields = ['name', 'type', 'status']
+    fields = ['name', 'type']
     template_name = 'base.html'
     success_url = '/admin/'
+    def post(self, request, *args, **kwargs):
+        if is_auth_perm(request, True):
+            returnrequest = super().post(request, args, kwargs)
+            AdminToEventMap.objects.create(Admin=request.user, event=self.object)
+            return returnrequest
+        else:
+            return Auth_login_or_Deny(request)
+
+    def get(self, request, *args, **kwargs):
+        if is_auth_perm(request, True):
+            return super().get(request,args, kwargs)
+        else:
+            return Auth_login_or_Deny(request)
+
 
 class UpdateEvent(UpdateView):
     model = Events
@@ -104,20 +124,36 @@ class UpdateEvent(UpdateView):
     pk_url_kwarg = 'pk'
     success_url = '/admin'
 
+    def post(self, request, *args, **kwargs):
+        if is_auth_perm(request, True) and is_your_event(request, Events.objects.get(pk=kwargs['pk'])):
+            return super().post(request, args, kwargs)
+
+        else:
+            return Auth_login_or_Deny(request)
+
+    def get(self, request, *args, **kwargs):
+        if is_auth_perm(request, True) and is_your_event(request, Events.objects.get(pk=kwargs['pk'])):
+            return super().get(request, args, kwargs)
+        else:
+            return Auth_login_or_Deny(request)
+
 
 class DelEvent(DeleteView):
     model = Events
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+        if is_auth_perm(request, True):
             try:
                 pkkey = kwargs['pk']
             except:
                 return HttpResponse(status=500)
+            if is_your_event(request, Events.objects.get(pk=pkkey)):
+                event = get_object_or_404(Events, pk=pkkey)
+                event.delete()
+                redirect('/admin')
+        return Auth_login_or_Deny(request)
 
-            evnt = get_object_or_404(Events, pk=pkkey)
-            evnt.delete()
-            return redirect('/admin/')
+
 
 class EvenRegistrationView(CreateView):
     model = EventRegistration
@@ -131,7 +167,7 @@ class EvenRegistrationView(CreateView):
             responce = super().post(request, args, kwargs)
             request.session["Registration"] = serialize('json', EventRegistration.objects.filter(pk=form.instance.pk))
             return responce
-        return render(request , "accessDeney.html")
+        return render(request , "accessDenied.html")
 
 
 
@@ -153,5 +189,34 @@ class ListCArtView(ListView):
 class CartCheckout():
     pass
 
+def is_perm(request, is_Admin=False ):
+        if is_Admin:
+            temp = Group.objects.get(name='Admin')
+            if temp in list(request.user.groups.all()):
+                return True
+            else: return False
+        else:
+            temp = Group.objects.get(name='User')
+            if temp in list(request.user.groups.all()):
+                return True
+            else: return False
+
+
+def is_auth_perm(request, is_Admin =False):
+    if request.user.is_authenticated:
+        return is_perm(request, is_Admin)
+    else:
+        return False
+
+def Auth_login_or_Deny(request):
+    if request.user.is_authenticated:
+        return render(request, 'accessDenied.html')
+    return redirect('/login')
+
+def is_your_user(request , user):
+    return user in [item.Non_Admin for item in list(AdminToUserMAp.objects.filter(Admin=request.user))]
+
+def is_your_event(request, event):
+    return event in [item.event for item in AdminToEventMap.objects.filter(Admin=request.user)]
 
 

@@ -37,11 +37,12 @@ urlpatterns = [
     path('user/del/<pk>' , views.DelUser.as_view()),
     path('user/add/', views.AddUser.as_view()),
 
-    path('event/add', views.AddEvent.as_view()),
-    path('event/update/<pk>', views.UpdateEvent.as_view()),
+    path('event/add/', views.AddEvent.as_view()),
+    path(r'event/update/<pk>', views.UpdateEvent.as_view()),
+    path(r'event/del/<pk>', views.DelEvent.as_view()),
 
     path('userdat/<first_name>', views.UpdateStuff.as_view()),
-    #path("auth/", include("django.con"))
+    path("login/", LoginView.as_view()),
 
     path('event/register', views.EvenRegistrationView.as_view()),
     path('events/cart/', views.ListCArtView.as_view())

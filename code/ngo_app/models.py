@@ -28,7 +28,7 @@ class EventRegistration(models.Model):
 class Events(models.Model):
     name = models.CharField(max_length=40)
     type = models.CharField(max_length=30)
-    status = models.CharField(max_length=10)
+    status = models.CharField(max_length=10, default='Active')
 
 
 class Donation(models.Model):
@@ -40,13 +40,14 @@ class Donation(models.Model):
     is_paid = models.BooleanField(default=False)
 
 
+class AdminToUserMAp(models.Model):
+    Admin = models.ForeignKey(User , on_delete=models.CASCADE, null=False, related_name='admin')
+    Non_Admin = models.ForeignKey(User , on_delete=models.CASCADE, null=False, related_name = 'non_admin')
 
 
-
-
-
-
-
+class AdminToEventMap(models.Model):
+    Admin = models.ForeignKey(User , on_delete=models.CASCADE, null=False)
+    event = models.ForeignKey(Events , on_delete=models.CASCADE, null=False)
 
 
 
