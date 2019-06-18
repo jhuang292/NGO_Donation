@@ -15,7 +15,7 @@ from django.core.serializers import serialize
 class HomeView(View):
 
     def get(self, request, *args, **kwargs):
-
+                
 
 class ListAll(ListView):
     template_name = "AdminTable.html"
