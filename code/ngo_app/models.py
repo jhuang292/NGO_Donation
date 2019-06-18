@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager , AbstractUser
 from django.contrib.auth.models import Group, Permission ,User
 from phone_field import PhoneField
-
+from datetime import date
 
 from django.contrib.auth import get_user_model
 
@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 class EventRegistration(models.Model):
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
-    cma = models.IntegerField(max_length=13)
+    cma = models.IntegerField()
     phone = PhoneField(help_text="Contact Number")
     email = models.EmailField()
     address_line1 = models.CharField(max_length=50)
@@ -22,7 +22,7 @@ class EventRegistration(models.Model):
     zip = models.CharField(max_length=8)
     country = models.CharField(max_length=30)
     urbanization =models.CharField(max_length=30)
-
+    user_user_model = models.ForeignKey(User, null=True ,on_delete=models.SET_NULL, default=None)
 
 
 class Events(models.Model):
@@ -35,12 +35,14 @@ class Donation(models.Model):
     event = models.ForeignKey(Events, on_delete= models.CASCADE)
     donation_amount = models.DecimalField(decimal_places=2, max_digits= 1000000000000000)
     user_data = models.ForeignKey(EventRegistration, on_delete= models.CASCADE)
+    is_recurring = models.BooleanField(default=False)
+    date = models.DateField(null=True, default=None)
+    is_paid = models.BooleanField(default=False)
 
 
-class RegisteredEvents(models.Model):
-    doner = models.ForeignKey(EventRegistration, on_delete= models.CASCADE)
-    event = models.ForeignKey(Events, on_delete=models.PROTECT)
-    user_model_user = models.ForeignKey(User, on_delete=models.PROTECT)
+
+
+
 
 
 

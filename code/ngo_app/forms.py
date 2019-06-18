@@ -6,9 +6,14 @@ from django import forms
 from django.shortcuts import get_object_or_404
 
 class UserDataForms(ModelForm):
+    #def __init__(self,data):
+        #self.cleaned_data = None
+        #super().__init__(data=data)
     class Meta:
         model = EventRegistration
         fields = ['first_name','last_name','cma', 'phone','email', 'address_line1','address_line2', 'city','state_code',  'zip',  'country', 'urbanization']
+
+
 
 
 
@@ -34,16 +39,4 @@ class AddUserForm(UserCreationForm):
     #         user.save()
     #     return user
 
-    'first_name',
-    'last_name',
-    'cma',
-    'phone',
-    'email',
-    'address_line1',
-    'address_line2',
-    'city',
-    'state_code',
-    'zip',
-    'country',
-    'urbanization'
 

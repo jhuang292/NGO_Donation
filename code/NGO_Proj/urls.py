@@ -46,8 +46,16 @@ urlpatterns = [
     path('event/register', views.EvenRegistrationView.as_view()),
     path('events/cart/', views.ListCArtView.as_view())
 
-
-
 ]
 
+
+# from django.core.mail import send_mail
+#
+# send_mail(
+#     'Subject here',
+#     'Here is the message.',
+#     'polerbeardave@gmail.com',
+#     ['david.r.dudek@gmail.com'],
+#     fail_silently=False,
+# )
 
