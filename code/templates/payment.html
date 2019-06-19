@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  {% load static %}
+  <title>User Cart Checkout</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'AdminTable/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'AdminTable/css/simple-sidebar.css' %}" rel="stylesheet">
+
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+  </style>
+
+</head>
+
+<body>
+<p align="center" style="font-size:50px; background-color: Tomato">ORDER SUMMARY</p>
+  <div class="d-flex" id="wrapper" >
+
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper" style="width:200%;">
+      <table>
+          <tr>
+            <th>ITEM DESCRIPTION</th>
+            <th>QUANTITY</th>
+            <th>PRICE</th>
+            <th>TOTAL</th>
+          </tr>
+            <tr>
+              <td>General Donation Fund</td>
+              <td>1</td>
+              <td>$100</td>
+                <td>$100</td>
+<!--              <td><a href="/user/update/{{item.pk}}">edit</a></td>-->
+            </tr>
+
+        </table>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+<!--      <div class="bg-light border-right" id="sidebar-wrapper">-->
+<!--      <div class="sidebar-heading" style="font-size:25px;">1 ITEM CART-->
+<!--          <p>CONTINUE SHOPPING</p>>-->
+<!--      </div>-->
+<!--        <div class="sidebar-heading" style="font-size:25px;">ORDER SUMMARY</div>-->
+<!--        <div class="sidebar-heading" style="font-size:25px;">ITEM SUBTOTAL                $100</div>-->
+      <div class="list-group list-group-flush">
+        <a href="#" class="list-group-item list-group-item-action bg-light">1 ITEM CART
+            <p>CONTINUE SHOPPING</p>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">ORDER SUMMARY</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">ITEM SUBTOTAL            $100
+            <p>TAX CALCULATED UPON FINAL CHECKOUT</p>
+        </a>
+          <a> <button type="button">CHECK OUT</button> </a>
+      </div>
+    </div>
+<!--    </div>-->
+    <!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Menu Toggle Script -->
+  <script>
+    $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+  </script>
+
+</body>
+
+</html>

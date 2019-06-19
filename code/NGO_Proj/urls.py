@@ -22,6 +22,8 @@ from django.contrib.auth.views import LoginView
 from django.conf.urls import url
 from django.urls import include
 from django.contrib.auth.views import auth_login
+from django.contrib.auth.decorators import login_required
+
 
 
 Group.objects.get_or_create(name="User")
@@ -31,7 +33,7 @@ Group.objects.get_or_create(name="Admin")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.ListAll.as_view()),
+    path('', login_required(views.ListAll.as_view())),
     #path('', views.HomeView.as_view()),
 
     path('user/update/<pk>', views.UpdateUsers.as_view()),
@@ -47,7 +49,10 @@ urlpatterns = [
     path("login/", LoginView.as_view()),
 
     path('register/', views.EvenRegistrationView.as_view()),
-    path('events/cart/', views.ListCArtView.as_view())
+    path('events/cart/', views.ListCArtView.as_view()),
+    path('auth/', include('django.contrib.auth.urls')),
+
+    path("Checkout/",views.CartCheckout.as_view())
 
 ]
 

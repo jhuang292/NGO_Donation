@@ -11,19 +11,16 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AddUserForm
 from django.core.serializers import serialize
+from django.contrib.auth.decorators import login_required
 
+from django.forms.widgets import PasswordInput
 
 class ListAll(ListView):
     template_name = "HomeTable.html"
 
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return super().get(request, args, kwargs)
-
-
     def get_queryset(self):
         if is_auth_perm(self.request, True):
-            return [item.Non_Admin for item in AdminToUserMAp.objects.filter(Admin=self.request.user)]
+            return User.objects.exclude(is_superuser=True)
         else:
             print("The Query SEt was called")
             return EventRegistration.objects.filter(user_user_model=self.request.user)
@@ -44,12 +41,18 @@ class UpdateStuff(UpdateView):
         form = UserDataForms
         return render(request, "base.html", {'form': form})
 
+
 class UpdateUsers(UpdateView):
     model = User
+    class Meta:
+        widgets = {
+
+            'password': 'PasswordInput'
+        }
     fields = ['first_name', 'last_name', 'email']
     template_name = 'base.html'
     pk_url_kwarg = 'pk'
-    success_url = '/admin'
+    success_url = '/'
     def get(self, request, *args, **kwargs):
         if is_auth_perm(request, True) and is_your_user(request, User.objects.get(pk=kwargs['pk'])):
             return super().get(request, args, kwargs)
@@ -75,7 +78,7 @@ class DelUser(DeleteView):
             if is_your_user(request, User.objects.get(pk=pkkey)):
                 user = get_object_or_404(User, pk=pkkey)
                 user.delete()
-                redirect('/admin')
+                redirect('/')
         return Auth_login_or_Deny(request)
 
 
@@ -83,7 +86,7 @@ class AddUser(CreateView):
     model = User
     fields = ['username','first_name', 'last_name', 'email', 'password']
     template_name = 'base.html'
-    success_url = '/admin'
+    success_url = '/'
 
     def get(self, request, *args, **kwargs):
         if is_auth_perm(request, True):
@@ -100,7 +103,7 @@ class AddUser(CreateView):
                 ustobj.groups.set([get_object_or_404(Group, name="User")])
                 ustobj.save()
                 AdminToUserMAp.objects.create(Admin=request.user , Non_Admin=ustobj)
-                return redirect("/admin/")
+                return redirect("/")
             else: return render(request, 'base.html', {'form':form})
         return Auth_login_or_Deny(request)
 
@@ -109,7 +112,7 @@ class AddEvent(CreateView):
     model = Events
     fields = ['name', 'type']
     template_name = 'base.html'
-    success_url = '/admin/'
+    success_url = '/'
     def post(self, request, *args, **kwargs):
         if is_auth_perm(request, True):
             returnrequest = super().post(request, args, kwargs)
@@ -127,10 +130,10 @@ class AddEvent(CreateView):
 
 class UpdateEvent(UpdateView):
     model = Events
-    fields = ['name', 'type', 'status']
+    fields = [ 'name', 'type', 'status']
     template_name = 'base.html'
     pk_url_kwarg = 'pk'
-    success_url = '/admin'
+    success_url = '/'
 
     def post(self, request, *args, **kwargs):
         if is_auth_perm(request, True) and is_your_event(request, Events.objects.get(pk=kwargs['pk'])):
@@ -158,7 +161,7 @@ class DelEvent(DeleteView):
             if is_your_event(request, Events.objects.get(pk=pkkey)):
                 event = get_object_or_404(Events, pk=pkkey)
                 event.delete()
-                redirect('/admin')
+                return redirect('/')
         return Auth_login_or_Deny(request)
 
 class AllEventsView(ListView):
@@ -179,9 +182,9 @@ class EvenRegistrationView(CreateView):
         if request.user.is_authenticated:
             form = UserDataForms(request.POST)
             responce = super().post(request, args, kwargs)
-            request.session["Registration"] = serialize('json', EventRegistration.objects.filter(pk=form.instance.pk))
+            request.session["Registration"] = self.object.pk
             return responce
-        return render(request , "accessDenied.html")
+        return Auth_login_or_Deny(request)
 
 
 
@@ -191,17 +194,26 @@ class ListCArtView(ListView):
     template_name = 'CartTable.html'
     def post(self, request, *args, **kwargs):
         sum = 0
-        #request.session["items"] = request.POST.items()
-        print(request.session["Registration"] + "hello")
+
+        # list of (Event_pk , amount_of_donation)
+        # request.session["items"] = [ (item[0][9:], item[1]) for item in request.POST.items() if item[0][0:4] =='item' ]
+        don_pk_list = []
         for item in request.POST.items():
             if item[0][0:9] == 'itempknum':
-               don = Donation.objects.create(event_pk=int(item[0][9:]),
-                                             donation_amount = float(item[1]),
-                                             user_data = request.session["Registration"].pk)
-        return redirect('/events/cart/')
+                don = Donation.objects.create(event=Events.objects.get(pk=int(item[0][9:])),
+                                            donation_amount = float(item[1]),
+                                            user_data = EventRegistration.objects.get(pk=int(request.session["Registration"])))
+                don_pk_list.append(don.pk)
+        request.session['items'] = don_pk_list
+        return redirect('/Checkout/')
 
-class CartCheckout():
-    pass
+class CartCheckout(ListView):
+    model = Donation
+    template_name = 'base.html'
+    def get_queryset(self):
+        return Donation.objects.filter(pk__in=[int(item) for item in self.request.session['items']])
+
+
 
 def is_perm(request, is_Admin=False ):
         if is_Admin:
@@ -213,7 +225,8 @@ def is_perm(request, is_Admin=False ):
             temp = Group.objects.get(name='User')
             if temp in list(request.user.groups.all()):
                 return True
-            else: return False
+            else:
+                return False
 
 
 def is_auth_perm(request, is_Admin =False):

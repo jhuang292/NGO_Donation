@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'ngo_app',
     'bootstrap4',
     'phone_field',
+    'crispy_forms',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -141,7 +142,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-LOGIN_REDIRECT_URL= '/'
+LOGIN_REDIRECT_URL= '/admin'
 
 
 

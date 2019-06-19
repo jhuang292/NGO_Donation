@@ -13,6 +13,9 @@ class UserDataForms(ModelForm):
         model = EventRegistration
         fields = ['first_name','last_name','cma', 'phone','email', 'address_line1','address_line2', 'city','state_code',  'zip',  'country', 'urbanization']
 
+class UserForm(ModelForm):
+    class Meta:
+        pass
 
 
 
