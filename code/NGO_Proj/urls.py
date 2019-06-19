@@ -52,7 +52,9 @@ urlpatterns = [
     path('events/cart/', views.ListCArtView.as_view()),
     path('auth/', include('django.contrib.auth.urls')),
 
-    path("Checkout/",views.CartCheckout.as_view())
+    path("Checkout/",views.CartCheckout.as_view()),
+
+    path("donations", views.ListDonations.as_view())
 
 ]
 

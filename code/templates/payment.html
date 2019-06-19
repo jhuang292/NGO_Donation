@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
+  {% load static %}
+  {% load filters %}
 <head>
 
   <meta charset="utf-8">
@@ -8,7 +9,6 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  {% load static %}
   <title>User Cart Checkout</title>
 
   <!-- Bootstrap core CSS -->
@@ -47,18 +47,17 @@
       <table>
           <tr>
             <th>ITEM DESCRIPTION</th>
-            <th>QUANTITY</th>
+            <th>Monthly Payment</th>
             <th>PRICE</th>
-            <th>TOTAL</th>
           </tr>
+          {% for item in object_list %}
             <tr>
-              <td>General Donation Fund</td>
-              <td>1</td>
-              <td>$100</td>
-                <td>$100</td>
-<!--              <td><a href="/user/update/{{item.pk}}">edit</a></td>-->
+              <td>{{item.event.name}}</td>
+              <td>{{ item.is_recurring|bool_yay_nay }}</td>
+              <td>${{item.donation_amount}}</td>
+                <!--              <td><a href="/user/update/{{item.pk}}">edit</a></td>-->
             </tr>
-
+            {% endfor %}
         </table>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -66,18 +65,12 @@
     <!-- Page Content -->
     <div id="page-content-wrapper">
 
-<!--      <div class="bg-light border-right" id="sidebar-wrapper">-->
-<!--      <div class="sidebar-heading" style="font-size:25px;">1 ITEM CART-->
-<!--          <p>CONTINUE SHOPPING</p>>-->
-<!--      </div>-->
-<!--        <div class="sidebar-heading" style="font-size:25px;">ORDER SUMMARY</div>-->
-<!--        <div class="sidebar-heading" style="font-size:25px;">ITEM SUBTOTAL                $100</div>-->
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light">1 ITEM CART
-            <p>CONTINUE SHOPPING</p>
+        <a href="#" class="list-group-item list-group-item-action bg-light">{{ object_list.count }} ITEM CART
+            <a href="/events/cart"><p>CONTINUE SHOPPING</p></a>
         </a>
         <a href="#" class="list-group-item list-group-item-action bg-light">ORDER SUMMARY</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">ITEM SUBTOTAL            $100
+        <a href="#" class="list-group-item list-group-item-action bg-light">ITEM SUBTOTAL ${{ sum }}
             <p>TAX CALCULATED UPON FINAL CHECKOUT</p>
         </a>
           <a> <button type="button">CHECK OUT</button> </a>

@@ -78,7 +78,7 @@ class DelUser(DeleteView):
             if is_your_user(request, User.objects.get(pk=pkkey)):
                 user = get_object_or_404(User, pk=pkkey)
                 user.delete()
-                redirect('/')
+                return redirect('/')
         return Auth_login_or_Deny(request)
 
 
@@ -193,25 +193,33 @@ class ListCArtView(ListView):
     queryset = Events.objects.all()
     template_name = 'CartTable.html'
     def post(self, request, *args, **kwargs):
-        sum = 0
 
-        # list of (Event_pk , amount_of_donation)
-        # request.session["items"] = [ (item[0][9:], item[1]) for item in request.POST.items() if item[0][0:4] =='item' ]
         don_pk_list = []
+        sum = 0
         for item in request.POST.items():
             if item[0][0:9] == 'itempknum':
                 don = Donation.objects.create(event=Events.objects.get(pk=int(item[0][9:])),
-                                            donation_amount = float(item[1]),
+                                            donation_amount = safe_float_cast(item[1]),
                                             user_data = EventRegistration.objects.get(pk=int(request.session["Registration"])))
-                don_pk_list.append(don.pk)
+                sum += safe_float_cast(item[1])
+                if safe_float_cast(item[1]) != 0.0:
+                    don_pk_list.append(don.pk)
         request.session['items'] = don_pk_list
+        request.session['sum']=sum
         return redirect('/Checkout/')
 
 class CartCheckout(ListView):
     model = Donation
-    template_name = 'base.html'
+    template_name = 'payment.html'
+    def get_context_data(self, *, object_list=None, **kwargs):
+        object_list = self.get_queryset()
+        return {'sum': self.request.session['sum'] ,'object_list':object_list }
     def get_queryset(self):
         return Donation.objects.filter(pk__in=[int(item) for item in self.request.session['items']])
+
+class ListDonations(ListView):
+    queryset = Donation.objects.all()
+    template_name = "AdminTableForDonations.html"
 
 
 
@@ -246,4 +254,10 @@ def is_your_user(request , user):
 def is_your_event(request, event):
     return event in [item.event for item in AdminToEventMap.objects.filter(Admin=request.user)]
 
+def safe_float_cast(variable):
+    try:
+        return float(variable)
+    except:
+        print('Cannot cast flaot-in reall deployment this would go to log ')
+        return 0.0
 

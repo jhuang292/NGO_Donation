@@ -94,36 +94,24 @@
       </nav>
 
       <div class="container-fluid">
-        {% if request.user|has_group:'Admin' %}
-        <h1 class="mt-4">User Management</h1>
-         <p align="right"><a href="/user/add/">Add User</a></p>
+        <h1 class="mt-4">Event Management</h1>
+
         <table>
           <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th></th>
-            <th></th>
+            <th>Name</th>
+            <th>Event</th>
+            <th>Amount</th>
+            <th>Date</th>
           </tr>
           {% for item in object_list %}
-            <tr>
-              <td>{{ item.first_name }}</td>
-              <td>{{ item.last_name }}</td>
-              <td>{{ item.email }}</td>
-              <td>{{ item| return_group }}</td>
-              <td><a href="/user/update/{{item.pk}}">edit</a></td>
-              <td><a href="/user/del/{{item.pk}}">Delete</a></td>
-            </tr>
+          <tr>
+            <td>{{ item.user_data.first_name }}</td>
+            <td>{{ item.event }}</td>
+            <td>{{ item.donation_amount }}</td>
+            <td>{{ item.date }}</td>
+          </tr>
           {% endfor %}
-          {% endif %}
-          {% if request.user|has_group:'User' %}
-          {% for item in object_list %}
-            <button>{{item.first_name}}{{itme.last_name}}</button>
-          {% empty %}
-          <a href = "/register"><button>Register</button></a>
-          {% endfor %}
-          {% endif %}
+
         </table>
       </div>
     </div>

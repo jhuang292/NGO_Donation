@@ -48,7 +48,7 @@
       <div class="list-group list-group-flush">
         {% if request.user|has_group:'Admin' %}
         <a href="/" class="list-group-item list-group-item-action bg-light">User Management</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Donation Management</a>
+        <a href="/donations" class="list-group-item list-group-item-action bg-light">Donation Management</a>
         <a href="/events/all" class="list-group-item list-group-item-action bg-light">Event Management</a>
         {% endif %}
         {% if request.user|has_group:'User' %}
