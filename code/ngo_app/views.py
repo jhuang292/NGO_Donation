@@ -243,6 +243,7 @@ class CartCheckout(ListView):
         don = Donation.objects.filter(pk__in=list(request.session['items']))
         for i in don:
             don.date_dj_name = date.today
+            don.is_paid = True
 
         del request.session['items']
         del request.session['Registration']
@@ -290,7 +291,7 @@ def Auth_login_or_Deny(request):
     return redirect('/login')
 
 def is_your_user(request , user):
-    return user in [item.Non_Admin for item in list(AdminToUserMAp.objects.filter(Admin=request.user))]
+    return user in [item.Non_Admin for item in list(AdminToUserMAp.objects.filter(Admin=request.user))] or user == request.user
 
 def is_your_event(request, event):
     return event in [item.event for item in AdminToEventMap.objects.filter(Admin=request.user)]
