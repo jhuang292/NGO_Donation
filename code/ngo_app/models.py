@@ -21,7 +21,7 @@ class EventRegistration(models.Model):
     state_code = models.CharField(max_length=2)
     zip = models.CharField(max_length=8)
     country = models.CharField(max_length=30)
-    urbanization =models.CharField(max_length=30)
+    urbanization = models.CharField(max_length=30)
     user_user_model = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, default=None)
 
 

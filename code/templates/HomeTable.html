@@ -119,10 +119,13 @@
           {% endif %}
           {% if request.user|has_group:'User' %}
           {% for item in object_list %}
-            <button>{{item.first_name}}{{itme.last_name}}</button>
-          {% empty %}
-          <a href = "/register"><button>Register</button></a>
+          <form action="/events/cart/{{item.pk}}" method="get">
+          <input type="submit" value="{{item.first_name}} {{item.last_name}}" />
+          </form>
           {% endfor %}
+          <form action="/register" method="get">
+          <input type="submit" value="Register" />
+          </form>
           {% endif %}
         </table>
       </div>

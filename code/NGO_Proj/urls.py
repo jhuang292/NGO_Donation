@@ -34,7 +34,6 @@ Group.objects.get_or_create(name="Admin")
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login_required(views.ListAll.as_view())),
-    #path('', views.HomeView.as_view()),
 
     path('user/update/<pk>', views.UpdateUsers.as_view()),
     path('user/del/<pk>' , views.DelUser.as_view()),
@@ -45,11 +44,13 @@ urlpatterns = [
     path(r'event/del/<pk>', views.DelEvent.as_view()),
     path(r'events/all', views.AllEventsView.as_view()),
 
-    path('userdat/<first_name>', views.UpdateStuff.as_view()),
     path("login/", LoginView.as_view()),
 
     path('register/', views.EvenRegistrationView.as_view()),
+
+    path('events/cart/<regist_pk>', views.ListCArtView.as_view()),
     path('events/cart/', views.ListCArtView.as_view()),
+
     path('auth/', include('django.contrib.auth.urls')),
 
     path("Checkout/",views.CartCheckout.as_view()),

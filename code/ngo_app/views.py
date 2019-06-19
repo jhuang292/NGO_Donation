@@ -22,7 +22,7 @@ class ListAll(ListView):
         if is_auth_perm(self.request, True):
             return User.objects.exclude(is_superuser=True)
         else:
-            print("The Query SEt was called")
+            print(EventRegistration.objects.filter(user_user_model=self.request.user))
             return EventRegistration.objects.filter(user_user_model=self.request.user)
 
 
@@ -31,15 +31,6 @@ class ListAll(ListView):
 
 
 
-class UpdateStuff(UpdateView):
-    model = EventRegistration
-    fields = ['first_name', "last_name", 'address_line1', 'address_line2', 'city', 'state_code', 'zip', 'country']
-    template_name = 'base.html'
-    pk_url_kwarg = 'pk'
-
-    def post(self, request, *args, **kwargs):
-        form = UserDataForms
-        return render(request, "base.html", {'form': form})
 
 
 class UpdateUsers(UpdateView):
@@ -180,8 +171,9 @@ class EvenRegistrationView(CreateView):
 
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            form = UserDataForms(request.POST)
             responce = super().post(request, args, kwargs)
+            self.object.user_user_model = request.user
+            self.object.save()
             request.session["Registration"] = self.object.pk
             return responce
         return Auth_login_or_Deny(request)
@@ -193,7 +185,6 @@ class ListCArtView(ListView):
     queryset = Events.objects.all()
     template_name = 'CartTable.html'
     def post(self, request, *args, **kwargs):
-
         don_pk_list = []
         sum = 0
         for item in request.POST.items():
@@ -207,6 +198,13 @@ class ListCArtView(ListView):
         request.session['items'] = don_pk_list
         request.session['sum']=sum
         return redirect('/Checkout/')
+
+    def get(self, request, *args, **kwargs):
+        if 'regist_pk' in kwargs.keys():
+            get_object_or_404(EventRegistration, pk=kwargs['regist_pk'])
+            request.session["Registration"] = kwargs['regist_pk']
+        return super().get(request, args, kwargs=None)
+
 
 class CartCheckout(ListView):
     model = Donation
