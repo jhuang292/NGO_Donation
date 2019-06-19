@@ -55,7 +55,9 @@ urlpatterns = [
 
     path("Checkout/",views.CartCheckout.as_view()),
 
-    path("donations", views.ListDonations.as_view())
+    path("donations", views.ListDonations.as_view()),
+
+    path('pros/', views.ProccessPayment.as_view())
 
 ]
 

@@ -10,14 +10,16 @@ from django.shortcuts import get_object_or_404 ,redirect
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AddUserForm
+from django.core.mail import send_mail
 from django.core.serializers import serialize
 from django.contrib.auth.decorators import login_required
-
+import smtplib
+from datetime import date
 from django.forms.widgets import PasswordInput
 
 class ListAll(ListView):
     template_name = "HomeTable.html"
-
+    paginate_by = 10
     def get_queryset(self):
         if is_auth_perm(self.request, True):
             return User.objects.exclude(is_superuser=True)
@@ -187,15 +189,27 @@ class ListCArtView(ListView):
     def post(self, request, *args, **kwargs):
         don_pk_list = []
         sum = 0
-        for item in request.POST.items():
+        itemlist = [i for i in request.POST.items()]
+        for i in range(len(itemlist)):
+            item = itemlist[i]
+            print(item)
             if item[0][0:9] == 'itempknum':
+
                 don = Donation.objects.create(event=Events.objects.get(pk=int(item[0][9:])),
-                                            donation_amount = safe_float_cast(item[1]),
-                                            user_data = EventRegistration.objects.get(pk=int(request.session["Registration"])))
+                                            donation_amount = safe_float_cast(item[1]), is_recurring=False ,user_data = EventRegistration.objects.get(pk=int(request.session["Registration"])))
+                don.save()
                 sum += safe_float_cast(item[1])
                 if safe_float_cast(item[1]) != 0.0:
                     don_pk_list.append(don.pk)
-        request.session['items'] = don_pk_list
+
+            elif item[0][0:6] == 'itempk':
+                obj =Donation.objects.get(pk=itemlist[(i-1)][0][9:])
+                obj.is_recurring = True
+                obj.save()
+
+
+
+            request.session['items'] = don_pk_list
         request.session['sum']=sum
         return redirect('/Checkout/')
 
@@ -215,7 +229,32 @@ class CartCheckout(ListView):
     def get_queryset(self):
         return Donation.objects.filter(pk__in=[int(item) for item in self.request.session['items']])
 
+
+    def post(self, request, *args, **kwargs):
+        send_string = "Your total is" + str(request.session['sum']) + "from car"
+        send_mail(
+            'Reciept',
+            send_string,
+            'david.r.dudek@gmail.com',
+            [EventRegistration.objects.get(pk=request.session['Registration']).email] ,
+            fail_silently=False,
+        )
+
+        don = Donation.objects.filter(pk__in=list(request.session['items']))
+        for i in don:
+            don.date_dj_name = date.today
+
+        del request.session['items']
+        del request.session['Registration']
+        del request.session['sum']
+
+        return redirect("/")
+
+
+
+
 class ListDonations(ListView):
+    #paginate_by = 10
     queryset = Donation.objects.all()
     template_name = "AdminTableForDonations.html"
 
@@ -233,6 +272,10 @@ def is_perm(request, is_Admin=False ):
                 return True
             else:
                 return False
+
+
+class ProccessPayment(CreateView):
+    pass
 
 
 def is_auth_perm(request, is_Admin =False):

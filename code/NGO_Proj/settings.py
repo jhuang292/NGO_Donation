@@ -16,11 +16,18 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 # EMAIL_HOST_USER = 'polerbeardave@gmail.com'
 # EMAIL_HOST_PASSWORD = 'Pacmaninitnow1'
 
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = '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'
-EMAIL_PORT = 587
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_HOST_USER = 'apikey'
+# EMAIL_HOST_PASSWORD = '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'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'david.r.dudek@gmail.com'
+EMAIL_HOST_PASSWORD = 'Pacmaninitnow1'
 
 import os
 
@@ -142,9 +149,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-LOGIN_REDIRECT_URL= '/'
+LOGIN_REDIRECT_URL='/'
 
-LOGIN_URL = '/login/'
+LOGIN_URL ='/login/'
 
 
 

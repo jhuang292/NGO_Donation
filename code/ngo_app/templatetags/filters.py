@@ -14,7 +14,7 @@ def has_group(user, group_name):
 
 @register.filter
 def bool_yay_nay(value: bool):
-    if value:
+    if value is True:
         return "Yes"
     else:
         return "No"
