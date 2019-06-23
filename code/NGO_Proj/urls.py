@@ -25,7 +25,7 @@ from django.contrib.auth.views import auth_login
 from django.contrib.auth.decorators import login_required
 
 
-
+#
 Group.objects.get_or_create(name="User")
 Group.objects.get_or_create(name="Admin")
 

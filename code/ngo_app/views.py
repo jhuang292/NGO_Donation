@@ -190,9 +190,11 @@ class ListCArtView(ListView):
         don_pk_list = []
         sum = 0
         itemlist = [i for i in request.POST.items()]
+        don = []
         for i in range(len(itemlist)):
             item = itemlist[i]
             print(item)
+
             if item[0][0:9] == 'itempknum':
 
                 don = Donation.objects.create(event=Events.objects.get(pk=int(item[0][9:])),
@@ -203,10 +205,9 @@ class ListCArtView(ListView):
                     don_pk_list.append(don.pk)
 
             elif item[0][0:6] == 'itempk':
-                obj =Donation.objects.get(pk=itemlist[(i-1)][0][9:])
-                obj.is_recurring = True
-                obj.save()
-
+                Donation.objects.filter(pk=don.pk).update(is_recurring = True)
+                # obj.is_recurring = True
+                #
 
 
             request.session['items'] = don_pk_list
@@ -218,6 +219,7 @@ class ListCArtView(ListView):
             get_object_or_404(EventRegistration, pk=kwargs['regist_pk'])
             request.session["Registration"] = kwargs['regist_pk']
         return super().get(request, args, kwargs=None)
+
 
 
 class CartCheckout(ListView):
@@ -232,13 +234,14 @@ class CartCheckout(ListView):
 
     def post(self, request, *args, **kwargs):
         send_string = "Your total is" + str(request.session['sum']) + "from car"
-        send_mail(
-            'Reciept',
-            send_string,
-            'david.r.dudek@gmail.com',
-            [EventRegistration.objects.get(pk=request.session['Registration']).email] ,
-            fail_silently=False,
-        )
+        self.get_queryset().update(is_paid=True, date_dj_name=date.today())
+        # send_mail(
+        #     'Reciept',
+        #     send_string,
+        #     'david.r.dudek@gmail.com',
+        #     [EventRegistration.objects.get(pk=request.session['Registration']).email] ,
+        #     fail_silently=False,
+        # )
 
         don = Donation.objects.filter(pk__in=list(request.session['items']))
         for i in don:

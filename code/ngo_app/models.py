@@ -39,14 +39,14 @@ class Donation(models.Model):
     donation_amount = models.DecimalField(decimal_places=2, max_digits= 1000000000000000)
     user_data = models.ForeignKey(EventRegistration, on_delete= models.CASCADE)
     is_recurring = models.BooleanField(default=False)
-    date_dj_name = models.DateField(null=True, default=date.today())
+    date_dj_name = models.DateField(null=True, default=None)
     is_paid = models.BooleanField(default=False)
     def __str__(self):
         return str(self.user_data)
 
 
 class AdminToUserMAp(models.Model):
-    Admin = models.ForeignKey(User , on_delete=models.CASCADE, null=False, related_name='admin')
+    Admin = models.ForeignKey(User , on_delete=models.SET_NULL, null=True, related_name='admin')
     Non_Admin = models.ForeignKey(User , on_delete=models.CASCADE, null=False, related_name = 'non_admin')
 
 
